@@ -1,4 +1,4 @@
-$ROOT='C:\Users\elex.khedia\Downloads\'
+$ROOT='D:\OneDrive - eClinicalWorks\Scripts\URL_Status_Check\src\main\'
 $LOGFILE = $ROOT+'URL_Status_Check\Log\logger.log'
 $CSV = $ROOT+'URL_Status_Check\Log\'+'logger.csv'
 $FORMAT = 'yyyy-MM-dd-hh:mm:ss'
@@ -20,13 +20,31 @@ Write-Output "$(Get-Date -Format $FORMAT): #####################################
     $Output = Invoke-WebRequest -Uri $First -UseBasicParsing 
     $Status = $Output.StatusCode
     $Content = $Output.Content
+    $Validation= $Content -match "<status>success</status>"
+    ##########################IF LOOP#########################################
+    if($Validation -eq "True")
+                {
+                    $Content="Success"
+                }
+    else 
+            {
+                $Content="Failed"
+            }
+
+
+
+
+
+
+    ##########################################################################
+
     $RawContentLength = $Output.RawContentLength
     $TimeTaken=(Measure-Command -Expression { $site = $Output}).Milliseconds
 	$timestamp= get-date -f yyyy-MM-dd-hh:mm:ss
   
   "$timestamp $First $Status $TimeTaken $RawContentLength $Content" | Out-File $CSV -Encoding ASCII -Append 
   
-  Write-Output "$(Get-Date -Format $FORMAT): $First -- $Status -- $TimeTaken ms -- $RawContentLength -$Content " |Out-File $LOGFILE -Append
+  Write-Output "$(Get-Date -Format $FORMAT): $First -- $Status -- $TimeTaken ms -- $RawContentLength -- $Content " |Out-File $LOGFILE -Append
   
   } 
 
